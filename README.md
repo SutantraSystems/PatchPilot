@@ -1,6 +1,6 @@
-# Patching Console — Web UI
+# Patch Pilot
 
-First component from the architecture: the **Web UI**, built as scoped —
+First component from the architecture: the **Patch Pilot**, built as scoped —
 Next.js + TypeScript + Tailwind + TanStack React Query. All four originally
 scoped screens are done. The backend now lives as a separate Python
 service — see `../Backend (Python)` — since the domain services were
