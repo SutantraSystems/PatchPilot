@@ -1,9 +1,9 @@
-# Patch Pilot
+# Patch Pilot (FRONTEND)
 
 First component from the architecture: the **Patch Pilot**, built as scoped —
 Next.js + TypeScript + Tailwind + TanStack React Query. All four originally
 scoped screens are done. The backend now lives as a separate Python
-service — see `../Backend (Python)` — since the domain services were
+service — see `../backend` — since the domain services were
 standardized on Python.
 
 Frontend verified working on macOS with Node.js via `npm install && npm run dev`.
@@ -51,7 +51,7 @@ are attributed to a fixed placeholder identity (`priya.iyer`, set in
 
 This app used to include its own backend as Next.js API routes
 (`src/app/api/`). Those have been removed — the backend is now
-`../Backend (Python)`, a FastAPI service exposing the exact same routes
+`../backend`, a FastAPI service exposing the exact same routes
 (`/api/compliance/*`, `/api/jobs*`) with the exact same fixture data and
 behavior, just running as its own process. See that folder's README for
 what it does and how to run it.
@@ -70,12 +70,12 @@ frontend on :3000, and the FastAPI backend on :8000.
 ## Running it
 
 ```bash
-cd "Web UI Code"
+cd "frontend"
 npm install
 npm run dev
 ```
 
-Then, in a separate terminal, start `../Backend (Python)` (see its
+Then, in a separate terminal, start `../backend` (see its
 README). Once both are up, open http://localhost:3000. Requires Node.js
 18.17+.
 
@@ -87,7 +87,7 @@ this project is pinned to Next 14.2.5.
 ## Project layout
 
 ```
-Web UI Code/
+frontend/
   .env.local.example                  # NEXT_PUBLIC_API_BASE_URL override
   src/
     app/
@@ -124,3 +124,92 @@ Inventory, Approvals) is in place, now against a real Python backend.
 Natural next iterations: real auth via Keycloak/LDAP (replacing the fixed
 `ACTOR` placeholder and `priya.iyer`), and swapping each fixture data
 module in the Python backend for the real microservice it stands in for.
+
+
+# Patching Console — Backend (Python)
+
+The Web UI's backend, converted from the original Next.js API routes to a
+standalone Python (FastAPI) service, per the decision to standardize the
+domain microservices on Python. This is the same temporary stand-in
+backend as before — same routes, same fixture data, same behavior — just
+running as its own process instead of living inside the Next.js app.
+
+Not yet run in this sandbox: there's no npm/pip registry access here, so
+this hasn't been installed or executed. On a machine with normal internet
+access:
+
+```bash
+cd "backend"
+python -m venv .venv
+.venv/bin/activate       
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+Then open http://localhost:8000/docs for the interactive OpenAPI docs
+FastAPI generates automatically, or http://localhost:8000/health for a
+quick liveness check. Requires Python 3.10+.
+
+The Web UI (`../frontend`) expects this running on port 8000 by
+default — see its `.env.local.example` if you need a different port or
+host.
+
+## What's here
+
+Same four screens' worth of API as before, just re-homed:
+
+- `GET /api/compliance/summary`, `GET /api/compliance/fleet` — dashboard and inventory data
+- `GET /api/jobs`, `POST /api/jobs` — job list and job creation (from the Inventory picker)
+- `GET /api/jobs/{id}`, `PATCH /api/jobs/{id}` — job detail and approve/reject (from the Approval Queue)
+- `GET /api/jobs/{id}/events` — Server-Sent Events stream of live job progress
+
+## Which fixture maps to which future service
+
+Same mapping as before, now in Python:
+
+- `data/fleet_data.py` stands in for the **CMDB Connector / Sync Adapter**,
+  **Patch State Store**, and **Patch Catalog & OEM Repo Integration**
+  services. `get_fleet_assets()` / `get_compliance_summary()` are the
+  functions to redirect once those exist.
+- `data/jobs_data.py` stands in for the **Job Orchestrator** and
+  **Approval Workflow Service**. `get_jobs()` / `get_job_by_id()` /
+  `create_job()` / `approve_job()` / `reject_job()` are the functions to
+  redirect; the synthetic step-ticking in `routers/jobs.py`'s SSE endpoint
+  should be replaced with a real subscription to the Event Bus.
+
+All job/asset state lives in an in-memory Python list, so — same caveat as
+before — it resets whenever the process restarts.
+
+## Wire contract
+
+`models/compliance.py` and `models/job.py` are Pydantic ports of the Web
+UI's `src/types/compliance.ts` and `src/types/job.ts`. Field names are
+intentionally camelCase (not idiomatic Python snake_case) so the JSON
+matches exactly — the frontend didn't need any type changes when it
+switched from calling its own Next.js routes to calling this service.
+
+## Known gap: no real auth yet
+
+`PATCH /api/jobs/{id}` (approve/reject) takes an `actor` field straight
+from the request body — there's no session or token to pull it from yet.
+Once Keycloak (with LDAP-backed group membership for who can approve) is
+configured, this endpoint needs to read `actor` from the verified OIDC
+token's claims server-side instead of trusting whatever the client sends,
+and should check the token for an approver role/group claim before acting.
+
+## Project layout
+
+```
+backend (Python)/
+  main.py                          # FastAPI app, CORS, router registration
+  requirements.txt
+  models/
+    compliance.py                  # Platform, Severity, FleetAsset, ComplianceSummary, ...
+    job.py                         # JobStatus, Job, CreateJobRequest, JobDecisionRequest, ...
+  data/
+    fleet_data.py                  # fixture fleet data + summary computation
+    jobs_data.py                   # fixture job data, step scripts, create/approve/reject
+  routers/
+    compliance.py                  # /api/compliance/*
+    jobs.py                        # /api/jobs*, including the SSE stream
+```

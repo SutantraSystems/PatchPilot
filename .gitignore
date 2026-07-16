@@ -1,9 +1,21 @@
-node_modules
-.next
-out
-.env*.local
-npm-debug.log*
-.DS_Store
+# Frontend files
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local
+frontend/npm-debug.log*
+frontend/.DS_Store
 
-venv/
+# Backend files
+backend/.venv/
+backend/venv
+backend/__pycache__/
+*.py[cod]
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
 
