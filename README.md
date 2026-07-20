@@ -21,9 +21,9 @@ PatchPilot is a patch orchestration and compliance management platform that help
 
 Before running the project, ensure the following software is installed:
 
-- Node.js 18.17 or later
-- Python **3.12.10 (Recommended)**
-
+- **Node.js:** 18.17 or later (recommended: Node.js 20 LTS)
+- **Python:** 3.12.10 (recommended)
+- **PostgreSQL:** 14 or later
 
 > **Note:** The backend has been developed and tested with **Python 3.12.10**. Using this version is recommended to avoid dependency compatibility issues.
 
