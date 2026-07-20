@@ -4,7 +4,7 @@
 
 # PatchPilot
 
-PatchPilot is a patch orchestration and compliance management platform that helps operations teams discover infrastructure assets, track patch compliance, schedule patch jobs, and monitor remediation status across virtual machines and Kubernetes environments.
+PatchPilot is a patch orchestration and compliance management platform that helps operations teams discover infrastructure assets, track patch compliance, schedule patch jobs, and monitor remediation status across virtual machines.
 
 <!-- ========================= -->
 <!--        TECH STACK         -->
