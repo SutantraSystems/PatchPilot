@@ -1,3 +1,29 @@
+## Prerequisites
+
+Before running the project, ensure the following software is installed:
+
+- Node.js 18.17 or later
+- Python **3.12.10 (Recommended)**
+
+
+> **Note:** The backend has been developed and tested with **Python 3.12.10**. Using this version is recommended to avoid dependency compatibility issues.
+
+## Start the Frontend
+
+Open a terminal and run:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend URL:
+
+```
+http://localhost:3000
+
+
 # Patch Pilot (FRONTEND)
 
 First component from the architecture: the **Patch Pilot**, built as scoped —
@@ -6,7 +32,7 @@ scoped screens are done. The backend now lives as a separate Python
 service — see `../backend` — since the domain services were
 standardized on Python.
 
-Frontend verified working on macOS with Node.js via `npm install && npm run dev`.
+Frontend verified working with Node.js via `npm install && npm run dev`.
 
 ## What's here
 
@@ -125,6 +151,72 @@ Natural next iterations: real auth via Keycloak/LDAP (replacing the fixed
 `ACTOR` placeholder and `priya.iyer`), and swapping each fixture data
 module in the Python backend for the real microservice it stands in for.
 
+## Start the Backend
+
+Open a second terminal.
+
+Navigate to the backend folder:
+
+```bash
+cd backend
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate the virtual environment.
+
+### Windows PowerShell
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### Windows Command Prompt
+
+```cmd
+.venv\Scripts\activate
+```
+
+### Git Bash
+
+```bash
+source .venv/Scripts/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the FastAPI server:
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+Backend URL:
+
+```
+http://localhost:8000
+```
+
+
+Swagger API Documentation:
+
+```
+http://localhost:8000/docs
+```
+
+Health Check:
+
+```
+http://localhost:8000/health
+```
 
 # Patching Console — Backend (Python)
 
@@ -138,13 +230,6 @@ Not yet run in this sandbox: there's no npm/pip registry access here, so
 this hasn't been installed or executed. On a machine with normal internet
 access:
 
-```bash
-cd "backend"
-python -m venv .venv
-.venv/bin/activate       
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-```
 
 Then open http://localhost:8000/docs for the interactive OpenAPI docs
 FastAPI generates automatically, or http://localhost:8000/health for a
