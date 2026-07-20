@@ -1,3 +1,22 @@
+<!-- ========================= -->
+<!--        PATCH PILOT        -->
+<!-- ========================= -->
+
+# PatchPilot
+
+PatchPilot is a patch orchestration and compliance management platform that helps operations teams discover infrastructure assets, track patch compliance, schedule patch jobs, and monitor remediation status across virtual machines and Kubernetes environments.
+
+<!-- ========================= -->
+<!--        TECH STACK         -->
+<!-- ========================= -->
+
+## Tech Stack
+
+- **Frontend:** Next.js 14 + TypeScript + Tailwind CSS + TanStack React Query
+- **Backend:** FastAPI  + PostgreSQL
+- **Communication:** REST APIs + Server-Sent Events (SSE)
+
+
 ## Prerequisites
 
 Before running the project, ensure the following software is installed:
@@ -8,9 +27,16 @@ Before running the project, ensure the following software is installed:
 
 > **Note:** The backend has been developed and tested with **Python 3.12.10**. Using this version is recommended to avoid dependency compatibility issues.
 
-## Start the Frontend
+## Getting Started
 
-Open a terminal and run:
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd PatchPilot
+```
+
+### 2. Start the Frontend
 
 ```bash
 cd frontend
@@ -18,11 +44,65 @@ npm install
 npm run dev
 ```
 
-Frontend URL:
+Frontend URL: **http://localhost:3000**
 
+### 3. Start the Backend
+
+Open a second terminal:
+
+```bash
+cd backend
+python -m venv .venv
 ```
-http://localhost:3000
 
+#### Activate the virtual environment
+
+**PowerShell**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**Command Prompt**
+
+```cmd
+.venv\Scripts\activate
+```
+
+**Git Bash**
+
+```bash
+source .venv/Scripts/activate
+```
+
+#### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Run the FastAPI server
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+Backend URL: **http://localhost:8000**
+
+Swagger Docs: **http://localhost:8000/docs**
+
+Health Check: **http://localhost:8000/health**
+
+### 4. Run the Application
+
+Make sure both services are running:
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend | http://localhost:8000 |
+
+Open **http://localhost:3000** in your browser.
 
 # Patch Pilot (FRONTEND)
 
@@ -93,19 +173,6 @@ implementations serve identical `FleetAsset`/`Job` JSON shapes.
 **Both services need to be running for the app to work**: this Next.js
 frontend on :3000, and the FastAPI backend on :8000.
 
-## Running it
-
-```bash
-cd "frontend"
-npm install
-npm run dev
-```
-
-Then, in a separate terminal, start `../backend` (see its
-README). Once both are up, open http://localhost:3000. Requires Node.js
-18.17+.
-
-
 Note: this project's `next.config.mjs` is a plain JS/ESM config, not
 TypeScript — Next.js only added native `next.config.ts` support in v15, and
 this project is pinned to Next 14.2.5.
@@ -151,72 +218,7 @@ Natural next iterations: real auth via Keycloak/LDAP (replacing the fixed
 `ACTOR` placeholder and `priya.iyer`), and swapping each fixture data
 module in the Python backend for the real microservice it stands in for.
 
-## Start the Backend
 
-Open a second terminal.
-
-Navigate to the backend folder:
-
-```bash
-cd backend
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate the virtual environment.
-
-### Windows PowerShell
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### Windows Command Prompt
-
-```cmd
-.venv\Scripts\activate
-```
-
-### Git Bash
-
-```bash
-source .venv/Scripts/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start the FastAPI server:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-Backend URL:
-
-```
-http://localhost:8000
-```
-
-
-Swagger API Documentation:
-
-```
-http://localhost:8000/docs
-```
-
-Health Check:
-
-```
-http://localhost:8000/health
-```
 
 # Patching Console — Backend (Python)
 
